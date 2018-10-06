@@ -12,7 +12,7 @@ Zeigt die Version des Votebots.
 
 ### `!votebot help`
 
-Sendet eine Whisper Nachricht, die den folgenden Link enthält: https://github.com/virtuaCode/bonjwa-votebot/blob/master/README.md
+Sendet eine Whisper Nachricht, die den folgenden Link enthält: <br>https://github.com/virtuaCode/bonjwa-votebot/blob/master/README.md
 
 ### `!votebot status`
 

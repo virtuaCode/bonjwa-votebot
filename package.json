@@ -1,0 +1,27 @@
+{
+  "name": "bonjwa-votebot",
+  "version": "1.0.0",
+  "description": "Votebot for https://twitch.tv/bonjwa",
+  "scripts": {
+    "start": "node ./dist/main.js",
+    "preinstall": "node ./yarn-check.js",
+    "dev": "nodemon -e ts --watch ./src -r tsconfig-paths/register --ignore *.spec.ts --exec ts-node --project \"./tsconfig.json\" ./src/main.ts",
+    "build": "tsc"
+  },
+  "author": "virtuaCode",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv-extended": "^2.3.0",
+    "mathjs": "^5.2.0",
+    "twitch-bot": "^1.2.5"
+  },
+  "devDependencies": {
+    "@types/mathjs": "^4.4.1",
+    "nodemon": "^1.18.4",
+    "ts-node": "^7.0.1",
+    "tsconfig-paths": "^3.6.0",
+    "tslint": "^5.11.0",
+    "tslint-config-airbnb": "^5.11.0",
+    "typescript": "^3.1.1"
+  }
+}

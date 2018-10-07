@@ -3,6 +3,7 @@ import { Config } from './config';
 import { Message } from './message';
 import { VoteService } from './vote.service';
 import { DefaultVoting, DefaultResult } from './default-voting';
+import { Logger } from './winston';
 import {
   parseAction, InitAction, StartAction, KillAction,
   MedianModeAction, NormalModeAction, HelpAction, StatusAction, VersionAction,
@@ -16,7 +17,7 @@ const { admin, command, channel, allowMods, pause, lifetime } = Config.instance.
 // TODO: improve logging
 
 if (debug) {
-  console.warn('Debug mode enabled!');
+  Logger.warn('Debug mode enabled!');
 }
 
 function checkPrivileges(chatter: Message) {
@@ -41,12 +42,18 @@ let mode: Mode = 'NORMAL';
 let lastVoteAt: number | null = null;
 let activeUntil: number | null = null;
 
-function say(message: string) {
-  if (debug) {
-    console.log(`> ${message}`);
-  } else {
+function say(text: string) {
+  const message = text.trim().split(/\s+/).join(' ');
+
+  Logger.info(`> ${message}`);
+
+  if (!debug) {
     bot.say(message);
   }
+}
+
+function logAction(clazz: {name: string}) {
+  Logger.info(`Executing ${clazz.name}`);
 }
 
 function isNotPaused() {
@@ -101,11 +108,11 @@ voting.on('end', (result: DefaultResult) => {
 });
 
 bot.on('join', (channel: any) => {
-  console.log(`Joined channel: ${channel}`);
+  Logger.info(`Joined channel: ${channel}`);
 });
 
 bot.on('error', (err: any) => {
-  console.error(err);
+  Logger.error(err);
 });
 
 bot.on('message', (chatter: Message) => {
@@ -131,6 +138,7 @@ bot.on('message', (chatter: Message) => {
   } else if (!checkPrivileges(chatter)) {
     return;
   } else if (action instanceof InitAction) {
+    logAction(InitAction);
     activeUntil = Date.now() + (lifetime * 1000);
     const info = `@${chatter.username} \
       Der Votebot wurde aktiviert und steht dem \
@@ -142,24 +150,31 @@ bot.on('message', (chatter: Message) => {
   } else if (typeof action === 'string') {
     return say(`@${chatter.username} ${action} NotLikeThis`);
   } else if (action instanceof StatusAction) {
+    logAction(StatusAction);
     const minutes = activeUntil ? Math.ceil((activeUntil - Date.now()) / 60000) : 0;
     return say(`@${chatter.username} \
     Der Votebot ist noch für ${minutes === 1 ? '1 Minute' : `${minutes} Minuten`} aktiviert.`);
   } else if (action instanceof VersionAction) {
+    logAction(VersionAction);
     return say(`@${chatter.username} Votebot Version: ${version}`);
   } else if (action instanceof StartAction) {
     // TODO: implement start action
+    logAction(StartAction);
     return say(`@${chatter.username} Dieser Befehl ist noch nicht implementiert! Kappa`);
   } else if (action instanceof KillAction) {
+    logAction(KillAction);
     say(`@${chatter.username} Der Votebot ist nun deaktiviert.`);
     return kill();
   } else if (action instanceof MedianModeAction) {
     // TODO: implement median mode action
+    logAction(MedianModeAction);
     return say(`@${chatter.username} Dieser Befehl ist noch nicht implementiert! Kappa`);
   } else if (action instanceof NormalModeAction) {
     // TODO: implement normal mode action
+    logAction(NormalModeAction);
     return say(`@${chatter.username} Dieser Befehl ist noch nicht implementiert! Kappa`);
   } else if (action instanceof HelpAction) {
+    logAction(HelpAction);
     return say(`/w ${chatter.username} [Votebot Help] \
     https://github.com/virtuaCode/bonjwa-votebot/blob/master/README.md`);
   }

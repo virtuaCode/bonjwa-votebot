@@ -39,11 +39,13 @@ export class NormalModeAction implements Action {
 }
 
 export function parseAction(text: string): Action | string | null {
-  if (!text.startsWith(`${voting.command} `) && voting.command !== text) {
+  const message = text.trim();
+
+  if (!message.startsWith(`${voting.command} `) && voting.command !== message) {
     return null;
   }
 
-  const [command, action, ...args] = text.split(' ');
+  const [command, action, ...args] = message.split(/\s+/);
 
   switch (action) {
     case undefined:
